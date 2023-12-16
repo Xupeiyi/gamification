@@ -3,15 +3,16 @@ package microservices.book.gamification.game;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import microservices.book.gamification.challenge.ChallengeSolvedDTO;
+import microservices.book.gamification.game.badgeprocessors.BadgeProcessor;
 import microservices.book.gamification.game.domain.BadgeCard;
 import microservices.book.gamification.game.domain.BadgeType;
 import microservices.book.gamification.game.domain.ScoreCard;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,10 +35,13 @@ public class GameServiceImpl implements GameService{
             scoreRepository.save(scoreCard);
             log.info("User {} scored {} points for attempt id {}",
                     challenge.getUserAlias(), scoreCard.getScore(), challenge.getAttemptId());
+
             List<BadgeCard> badgeCards = processForBadges(challenge);
             result = new GameResult(
                     scoreCard.getScore(),
-                    badgeCards.stream().map(BadgeCard::getBadgeType).collect(Collectors.toList())
+                    badgeCards.stream()
+                            .map(BadgeCard::getBadgeType)
+                            .collect(Collectors.toList())
             );
         } else {
             log.info("Attempt id {} is not correct. " + "User {} does not get score.",
@@ -48,7 +52,7 @@ public class GameServiceImpl implements GameService{
     }
 
     /**
-     * Check the total score and the different score cards obtained
+     * Check the total score and the different scorecards obtained
      * to give new badges in case their conditions are met.
      */
     private List<BadgeCard> processForBadges(final ChallengeSolvedDTO solvedChallenge) {
@@ -64,6 +68,7 @@ public class GameServiceImpl implements GameService{
                 .stream()
                 .map(BadgeCard::getBadgeType)
                 .collect(Collectors.toSet());
+
         // Calls the badge processors for badges that the user doesn't have yet
         List<BadgeCard> newBadgeCards = badgeProcessors
                 .stream()

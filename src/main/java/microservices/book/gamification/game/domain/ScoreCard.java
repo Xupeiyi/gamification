@@ -1,17 +1,19 @@
 package microservices.book.gamification.game.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.*;
+import org.hibernate.Hibernate;
 
-
-import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class ScoreCard {
 
     public static final int DEFAULT_SCORE = 10;
@@ -31,6 +33,19 @@ public class ScoreCard {
 
     public ScoreCard(final Long userId, final Long attemptId) {
         this(null, userId, attemptId, System.currentTimeMillis(), DEFAULT_SCORE);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ScoreCard scoreCard = (ScoreCard) o;
+        return cardId != null && Objects.equals(cardId, scoreCard.cardId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
 

@@ -1,6 +1,6 @@
 package microservices.book.gamification.game.badgeprocessors;
 
-import microservices.book.gamification.challenge.ChallengeSolvedDTO;
+import microservices.book.gamification.challenge.ChallengeSolvedEvent;
 import microservices.book.gamification.game.domain.BadgeType;
 import microservices.book.gamification.game.domain.ScoreCard;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class BronzeBadgeProcessor implements BadgeProcessor{
     public Optional<BadgeType> processForOptionalBadge(
             int currentScore,
             List<ScoreCard> scoreCardList,
-            ChallengeSolvedDTO solvedDTO
+            ChallengeSolvedEvent solvedEvent
     ) {
         return currentScore > 50 ? Optional.of(BadgeType.BRONZE) : Optional.empty();
     }
